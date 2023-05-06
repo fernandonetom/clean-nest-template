@@ -1,10 +1,10 @@
 import { FieldError } from '../interfaces/IValidator';
 import { BaseException } from './BaseException';
 
-export class EntityValidationException extends BaseException {
+export class UniqueIdException extends BaseException {
   constructor(errors: FieldError) {
-    super('Entity Validation Error');
-    this.name = 'EntityValidation';
+    super('Unique ID Error');
+    this.name = 'UniqueIdException';
     this.errors = errors;
   }
 }

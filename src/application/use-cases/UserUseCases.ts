@@ -8,7 +8,7 @@ import { IUseCase } from '../interfaces/use-cases/IUseCase';
 export class UserUseCases implements IUseCase<User> {
   constructor(private readonly repository: IUsersRepository) {}
 
-  findAll(): Promise<User[]> {
+  list(): Promise<User[]> {
     return this.repository.findAll();
   }
 

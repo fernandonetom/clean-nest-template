@@ -1,7 +1,7 @@
 import { UniqueId } from '../../../domain/value-objects/UniqueId';
 
 export interface IUseCase<TEntity> {
-  findAll(): Promise<TEntity[]>;
+  list(): Promise<TEntity[]>;
 
   create(entity: TEntity): Promise<void>;
 

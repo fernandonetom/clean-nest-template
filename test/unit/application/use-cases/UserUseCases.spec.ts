@@ -115,7 +115,7 @@ describe('UserUseCases', () => {
     const user2 = UserFixture.GenerateValidUser();
     usersRepository.findAll.mockResolvedValue([user1, user2]);
 
-    const result = await userUseCases.findAll();
+    const result = await userUseCases.list();
 
     expect(result).toEqual([user1, user2]);
     expect(usersRepository.findAll).toHaveBeenCalled();

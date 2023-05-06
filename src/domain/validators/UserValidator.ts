@@ -1,8 +1,9 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { IUserPropsDto } from '../dtos/UserDto';
 import { ClassValidator } from '../@shared/validators/ClassValidator';
+import { EntityRules } from '../@shared/validators/EntityValidator';
 
-export class UserRules {
+export class UserRules extends EntityRules {
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -17,6 +18,7 @@ export class UserRules {
   password: string;
 
   constructor(props: IUserPropsDto) {
+    super(props);
     Object.assign(this, props);
   }
 }

@@ -1,14 +1,13 @@
-import { Result } from '../../../domain/@shared/models/Result';
 import { UniqueId } from '../../../domain/value-objects/UniqueId';
 
 export interface IUseCase<TEntity> {
-  findAll(): Promise<Result<TEntity[]>>;
+  findAll(): Promise<TEntity[]>;
 
-  create(entity: TEntity): Promise<Result<void>>;
+  create(entity: TEntity): Promise<void>;
 
-  update(entity: TEntity): Promise<Result<void>>;
+  update(entity: TEntity): Promise<void>;
 
-  findById(id: UniqueId): Promise<Result<TEntity>>;
+  findById(id: UniqueId): Promise<TEntity>;
 
-  remove(entity: TEntity): Promise<Result<void>>;
+  remove(entity: TEntity): Promise<void>;
 }

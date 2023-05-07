@@ -29,7 +29,7 @@ describe('UserUseCases', () => {
 
     await expect(act).rejects.toThrowError(
       new ConflictException({
-        Email: ['Already in use'],
+        Email: ['Email already in use'],
       }),
     );
     expect(usersRepository.findByEmail).toHaveBeenCalledWith(user.email);

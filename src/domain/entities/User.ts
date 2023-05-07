@@ -58,4 +58,14 @@ export class User extends Entity {
       throw new EntityValidationException(validator.errors);
     }
   }
+
+  async toJson(): Promise<string> {
+    return JSON.stringify({
+      id: this.id.value,
+      name: this._name,
+      email: this._email,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    });
+  }
 }

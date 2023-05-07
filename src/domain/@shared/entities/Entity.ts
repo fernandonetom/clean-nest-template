@@ -13,6 +13,7 @@ export abstract class Entity {
   }
 
   protected abstract validate(): void;
+  protected abstract toJson(): Promise<string>;
 
   get id() {
     return this._id;

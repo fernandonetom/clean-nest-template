@@ -4,8 +4,8 @@ import { UsersController } from '../../../../src/presentation/controllers/UsersC
 import { UserFixture } from '../../domain/fixtures/UserFixture';
 import { UsersVMFixtures } from '../fixtures/UsersVMFixtures';
 import { CreateUserVM } from '../../../../src/presentation/view-models/users/CreateUserVM';
-import { UserVM } from '../../../../src/presentation/view-models/users/UserVM';
 import { EntityValidationException } from '../../../../src/domain/@shared/exceptions/EntityValidationException';
+import { UniqueIdVM } from '../../../../src/presentation/view-models/value-objects/UniqueIdVM';
 
 describe('UsersController', () => {
   let usersController: UsersController;
@@ -42,6 +42,35 @@ describe('UsersController', () => {
     userUseCases.create.mockRejectedValueOnce(exception);
 
     await expect(usersController.createUser(createUserVm)).rejects.toThrowError(
+      exception,
+    );
+  });
+
+  it('should find an user by id', async () => {
+    const user = UserFixture.GenerateValidUser();
+    const viewModel = UniqueIdVM.toViewModel(user.id);
+    jest.spyOn(UniqueIdVM, 'fromViewModel');
+    userUseCases.findById.mockResolvedValueOnce(user);
+
+    const result = await usersController.findUser(viewModel);
+
+    expect(result).toBeTruthy();
+    expect(result.id).toBe(user.id.value);
+    expect(result.name).toBe(user.name);
+    expect(result.email).toBe(user.email);
+    expect(result.createdAt).toBeTruthy();
+    expect(UniqueIdVM.fromViewModel).toHaveBeenCalledWith(viewModel);
+  });
+
+  it('should throw if find user by id use case throws', async () => {
+    const exception = new EntityValidationException({
+      field: ['any-error'],
+    });
+    const user = UserFixture.GenerateValidUser();
+    const viewModel = UniqueIdVM.toViewModel(user.id);
+    userUseCases.findById.mockRejectedValueOnce(exception);
+
+    await expect(usersController.findUser(viewModel)).rejects.toThrowError(
       exception,
     );
   });

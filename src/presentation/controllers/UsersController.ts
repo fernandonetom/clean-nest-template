@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Param, Get } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -6,6 +6,8 @@ import {
   ApiUnprocessableEntityResponse,
   ApiBadRequestResponse,
   ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import { UserUseCases } from '../../application/use-cases/UserUseCases';
 import { UserVM } from '../view-models/users/UserVM';
@@ -13,6 +15,8 @@ import { BadRequestError } from '../errors/BadRequestError';
 import { CreateUserVM } from '../view-models/users/CreateUserVM';
 import { UnprocessableEntityError } from '../errors/UnprocessableEntityError';
 import { InternalServerError } from '../errors/InternalServerError';
+import { UniqueIdVM } from '../view-models/value-objects/UniqueIdVM';
+import { NotFoundError } from '../errors/NotFoundError';
 
 @ApiTags('Users')
 @Controller('users')
@@ -23,7 +27,7 @@ export class UsersController {
   @ApiOperation({
     summary: 'Create an user',
   })
-  @ApiCreatedResponse({ type: UserVM, status: HttpStatus.CREATED })
+  @ApiCreatedResponse({ type: UserVM })
   @ApiBadRequestResponse({
     description: 'The request object doesn`t match the expected one',
     type: BadRequestError,
@@ -42,5 +46,34 @@ export class UsersController {
     );
 
     return UserVM.toViewModel(newUser);
+  }
+
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Find an user',
+  })
+  @ApiOkResponse({ type: UserVM })
+  @ApiBadRequestResponse({
+    description: 'The request object doesn`t match the expected one',
+    type: BadRequestError,
+  })
+  @ApiNotFoundResponse({
+    description: "The request object wasn't found",
+    type: NotFoundError,
+  })
+  @ApiUnprocessableEntityResponse({
+    description: 'Validation error while creating user',
+    type: UnprocessableEntityError,
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal Server Error',
+    type: InternalServerError,
+  })
+  async findUser(@Param('id') uniqueId: UniqueIdVM): Promise<UserVM> {
+    const user = await this.usersUseCases.findById(
+      UniqueIdVM.fromViewModel(uniqueId),
+    );
+
+    return UserVM.toViewModel(user);
   }
 }

@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { ConflictException } from '../../domain/@shared/exceptions/ConflictException';
 import { NotFoundException } from '../../domain/@shared/exceptions/NotFoundException';
 import { User } from '../../domain/entities/User';
@@ -5,6 +6,7 @@ import { UniqueId } from '../../domain/value-objects/UniqueId';
 import { IUsersRepository } from '../interfaces/repositories/IUsersRepository';
 import { IUseCase } from '../interfaces/use-cases/IUseCase';
 
+@Injectable()
 export class UserUseCases implements IUseCase<User> {
   constructor(private readonly repository: IUsersRepository) {}
 
@@ -12,14 +14,16 @@ export class UserUseCases implements IUseCase<User> {
     return this.repository.findAll();
   }
 
-  async create(entity: User): Promise<void> {
+  async create(entity: User): Promise<User> {
     const findUser = await this.repository.findByEmail(entity.email);
     if (findUser)
       throw new ConflictException({
-        Email: ['Already in use'],
+        Email: ['Email already in use'],
       });
 
     await this.repository.create(entity);
+
+    return entity;
   }
 
   async update(entity: User): Promise<void> {

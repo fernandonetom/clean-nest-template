@@ -1,13 +1,13 @@
 import { UniqueId } from '../../../domain/value-objects/UniqueId';
 
-export interface IRepository<TEntity> {
-  findAll(): Promise<TEntity[]>;
+export abstract class IRepository<TEntity> {
+  abstract findAll(): Promise<TEntity[]>;
 
-  create(entity: TEntity): Promise<void>;
+  abstract create(entity: TEntity): Promise<void>;
 
-  update(entity: TEntity): Promise<void>;
+  abstract update(entity: TEntity): Promise<void>;
 
-  findById(id: UniqueId): Promise<TEntity | null>;
+  abstract findById(id: UniqueId): Promise<TEntity | null>;
 
-  remove(entity: TEntity): Promise<void>;
+  abstract remove(entity: TEntity): Promise<void>;
 }

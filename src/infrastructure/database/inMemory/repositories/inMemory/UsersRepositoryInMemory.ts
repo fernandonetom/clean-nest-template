@@ -1,7 +1,9 @@
+import { Injectable } from '@nestjs/common';
 import { IUsersRepository } from '../../../../../application/interfaces/repositories/IUsersRepository';
 import { User } from '../../../../../domain/entities/User';
 import { UniqueId } from '../../../../../domain/value-objects/UniqueId';
 
+@Injectable()
 export class UsersRepositoryInMemory implements IUsersRepository {
   private readonly users: User[] = [];
 

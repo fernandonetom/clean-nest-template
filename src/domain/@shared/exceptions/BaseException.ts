@@ -6,4 +6,8 @@ export class BaseException extends Error {
   constructor(message: string) {
     super(message);
   }
+
+  getErrors(): FieldError {
+    return this.errors;
+  }
 }

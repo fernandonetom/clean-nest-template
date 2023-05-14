@@ -6,6 +6,7 @@ import { UsersVMFixtures } from '../fixtures/UsersVMFixtures';
 import { CreateUserVM } from '../../../../src/presentation/view-models/users/CreateUserVM';
 import { EntityValidationException } from '../../../../src/domain/@shared/exceptions/EntityValidationException';
 import { UniqueIdVM } from '../../../../src/presentation/view-models/value-objects/UniqueIdVM';
+import { NotFoundException } from '../../../../src/domain/@shared/exceptions/NotFoundException';
 
 describe('UsersController', () => {
   let usersController: UsersController;
@@ -72,6 +73,40 @@ describe('UsersController', () => {
 
     await expect(usersController.findUser(viewModel)).rejects.toThrowError(
       exception,
+    );
+  });
+
+  it('should update an user', async () => {
+    const user = UserFixture.GenerateValidUser();
+    const viewModelUniqueId = UniqueIdVM.toViewModel(user.id);
+    const viewModelUpdateUser = UsersVMFixtures.GenerateUpdateUserVm(user);
+    jest.spyOn(UniqueIdVM, 'fromViewModel');
+
+    await usersController.updateUser(viewModelUniqueId, viewModelUpdateUser);
+
+    expect(UniqueIdVM.fromViewModel).toHaveBeenCalledWith(viewModelUniqueId);
+    expect(userUseCases.update).toHaveBeenCalledWith({
+      id: user.id,
+      ...viewModelUpdateUser,
+    });
+  });
+
+  it('should throws if update user throws', async () => {
+    const user = UserFixture.GenerateValidUser();
+    const viewModelUniqueId = UniqueIdVM.toViewModel(user.id);
+    const viewModelUpdateUser = UsersVMFixtures.GenerateUpdateUserVm(user);
+    userUseCases.update.mockRejectedValue(
+      new NotFoundException({
+        user: ['Not found'],
+      }),
+    );
+
+    await expect(() =>
+      usersController.updateUser(viewModelUniqueId, viewModelUpdateUser),
+    ).rejects.toThrow(
+      new NotFoundException({
+        user: ['Not found'],
+      }),
     );
   });
 });

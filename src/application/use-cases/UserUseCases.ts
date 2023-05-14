@@ -5,6 +5,7 @@ import { User } from '../../domain/entities/User';
 import { UniqueId } from '../../domain/value-objects/UniqueId';
 import { IUsersRepository } from '../interfaces/repositories/IUsersRepository';
 import { IUseCase } from '../interfaces/use-cases/IUseCase';
+import { IUpdateUserDto } from '../dtos/UserDto';
 
 @Injectable()
 export class UserUseCases implements IUseCase<User> {
@@ -26,9 +27,16 @@ export class UserUseCases implements IUseCase<User> {
     return entity;
   }
 
-  async update(entity: User): Promise<void> {
-    await this.findById(entity.id);
-    await this.repository.update(entity);
+  async update(data: IUpdateUserDto): Promise<void> {
+    const user = await this.findById(data.id);
+
+    user.update({
+      name: data.name,
+      email: data.email,
+      password: data.password,
+    });
+
+    await this.repository.update(user);
   }
 
   async findById(id: UniqueId): Promise<User> {

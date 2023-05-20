@@ -24,7 +24,7 @@ export class UsersRepositoryInMemory implements IUsersRepository {
     this.users[findIndex] = entity;
   }
   async findById(id: UniqueId): Promise<User> {
-    return this.users.find((item) => item.id === id);
+    return this.users.find((item) => item.id.value === id.value);
   }
   async remove(entity: User): Promise<void> {
     const findIndex = this.users.findIndex(

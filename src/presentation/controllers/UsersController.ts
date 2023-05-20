@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Param, Get, Put } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  Get,
+  Put,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -71,7 +80,7 @@ export class UsersController {
     description: 'Internal Server Error',
     type: InternalServerError,
   })
-  async findUser(@Param('id') uniqueId: UniqueIdVM): Promise<UserVM> {
+  async findUser(@Param() uniqueId: UniqueIdVM): Promise<UserVM> {
     const user = await this.usersUseCases.findById(
       UniqueIdVM.fromViewModel(uniqueId),
     );
@@ -80,6 +89,7 @@ export class UsersController {
   }
 
   @Put(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Update an user',
   })
@@ -101,8 +111,8 @@ export class UsersController {
     type: InternalServerError,
   })
   async updateUser(
-    @Param('id') uniqueId: UniqueIdVM,
-    updateUser: UpdateUserVM,
+    @Param() uniqueId: UniqueIdVM,
+    @Body() updateUser: UpdateUserVM,
   ): Promise<void> {
     await this.usersUseCases.update({
       id: UniqueIdVM.fromViewModel(uniqueId),

@@ -1,14 +1,11 @@
 import { Module } from '@nestjs/common';
 import { UserUseCases } from '../../../application/use-cases/UserUseCases';
-import { UsersRepositoryInMemory } from '../../database/inMemory/repositories/inMemory/UsersRepositoryInMemory';
-import { IUsersRepository } from '../../../application/interfaces/repositories/IUsersRepository';
 import { UsersController } from '../../../presentation/controllers/UsersController';
+import { InfraModule } from './infra.module';
 
 @Module({
+  imports: [InfraModule],
   controllers: [UsersController],
-  providers: [
-    UserUseCases,
-    { provide: IUsersRepository, useClass: UsersRepositoryInMemory },
-  ],
+  providers: [UserUseCases],
 })
 export class UsersModule {}

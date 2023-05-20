@@ -4,14 +4,17 @@ import { UserFixture } from '../../domain/fixtures/UserFixture';
 import { IUsersRepository } from '../../../../src/application/interfaces/repositories/IUsersRepository';
 import { ConflictException } from '../../../../src/domain/@shared/exceptions/ConflictException';
 import { NotFoundException } from '../../../../src/domain/@shared/exceptions/NotFoundException';
+import { IEncryptAdapter } from '../../../../src/application/interfaces/adapters/IEncryptAdapter';
 
 describe('UserUseCases', () => {
   let userUseCases: UserUseCases;
   let usersRepository: MockProxy<IUsersRepository>;
+  let encryptAdapter: MockProxy<IEncryptAdapter>;
 
   beforeEach(() => {
     usersRepository = mock<IUsersRepository>();
-    userUseCases = new UserUseCases(usersRepository);
+    encryptAdapter = mock<IEncryptAdapter>();
+    userUseCases = new UserUseCases(usersRepository, encryptAdapter);
   });
   it('should create a new user', async () => {
     const user = UserFixture.GenerateValidUser();
@@ -19,6 +22,7 @@ describe('UserUseCases', () => {
     await userUseCases.create(user);
 
     expect(usersRepository.create).toHaveBeenCalledWith(user);
+    expect(encryptAdapter.getHash).toHaveBeenCalledWith(user.password);
   });
 
   it('should not create an user when their email is in use', async () => {
@@ -39,10 +43,32 @@ describe('UserUseCases', () => {
     const user = UserFixture.GenerateValidUser();
     usersRepository.findById.mockResolvedValue(user);
 
-    await userUseCases.update(user);
+    await userUseCases.update({
+      id: user.id,
+      email: user.email,
+      password: user.password,
+      name: user.name,
+    });
 
     expect(usersRepository.findById).toHaveBeenCalledWith(user.id);
     expect(usersRepository.update).toHaveBeenCalledWith(user);
+    expect(encryptAdapter.getHash).toHaveBeenCalledWith(user.password);
+  });
+
+  it('should update an user without change password', async () => {
+    const user = UserFixture.GenerateValidUser();
+    usersRepository.findById.mockResolvedValue(user);
+
+    await userUseCases.update({
+      id: user.id,
+      email: user.email,
+      password: undefined,
+      name: user.name,
+    });
+
+    expect(usersRepository.findById).toHaveBeenCalledWith(user.id);
+    expect(usersRepository.update).toHaveBeenCalledWith(user);
+    expect(encryptAdapter.getHash).not.toHaveBeenCalled();
   });
 
   it("should not update an user if user doesn't exists", async () => {

@@ -16,6 +16,10 @@ export class User extends Entity {
     return this._email;
   }
 
+  public get password() {
+    return this._password;
+  }
+
   constructor({
     id,
     name,

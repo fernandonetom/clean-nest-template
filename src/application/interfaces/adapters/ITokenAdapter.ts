@@ -11,4 +11,5 @@ export interface ITokenOutput {
 
 export interface ITokenAdapter {
   sing(input: ITokenInput): Promise<ITokenOutput>;
+  verify(token: string): Promise<ITokenInput>;
 }

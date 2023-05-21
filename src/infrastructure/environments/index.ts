@@ -12,4 +12,9 @@ export class Environment {
         return '.env';
     }
   }
+
+  static jwt = {
+    secret: process.env.JWT_SECRET,
+    expiration: Number(process.env.JWT_EXPIRATION),
+  };
 }

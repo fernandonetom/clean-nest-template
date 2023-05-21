@@ -8,6 +8,6 @@ export class BaseException extends Error {
   }
 
   getErrors(): FieldError {
-    return this.errors;
+    return this.errors ?? {};
   }
 }

@@ -9,9 +9,9 @@ import { Environment } from '../../environments';
 export class JwtAdapter extends ITokenAdapter {
   async sing(input: ITokenInput): Promise<ITokenOutput> {
     const now = new Date();
-    const expiration = Environment.jwt.expiration;
+    const { expiration, secret } = Environment.getJwtConfig();
 
-    const token = jwt.sign(input, Environment.jwt.secret, {
+    const token = jwt.sign(input, secret, {
       expiresIn: expiration,
     });
 
@@ -22,7 +22,10 @@ export class JwtAdapter extends ITokenAdapter {
   }
 
   async verify(token: string): Promise<ITokenInput> {
-    const decoded = jwt.verify(token, Environment.jwt.secret) as ITokenInput;
+    const decoded = jwt.verify(
+      token,
+      Environment.getJwtConfig().secret,
+    ) as ITokenInput;
 
     return {
       user: {

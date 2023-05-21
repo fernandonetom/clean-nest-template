@@ -17,10 +17,10 @@ describe('JwtAdapter', () => {
         id: 'any-id',
       },
     };
-    Environment.jwt = {
+    jest.spyOn(Environment, 'getJwtConfig').mockReturnValueOnce({
       expiration: 60,
       secret: 'any-secret',
-    };
+    });
     jest.spyOn(jwt, 'sign');
 
     const token = await jwtAdapter.sing(input);
@@ -55,10 +55,10 @@ describe('JwtAdapter', () => {
         id: 'any-id',
       },
     };
-    Environment.jwt = {
-      expiration: 120,
+    jest.spyOn(Environment, 'getJwtConfig').mockReturnValue({
+      expiration: 60,
       secret: 'any-secret',
-    };
+    });
     const token = await jwtAdapter.sing(input);
     jest.spyOn(jwt, 'verify');
 

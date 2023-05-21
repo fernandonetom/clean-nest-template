@@ -9,6 +9,7 @@ import { SignInUseCase } from '../../application/use-cases/SignInUseCase';
 import { SignInOutputVM } from '../view-models/auth/SignInOutputVM';
 import { SignInInputVM } from '../view-models/auth/SignInInputVM';
 import { UnauthorizedError } from '../errors/UnauthorizedError';
+import { Public } from '../../infrastructure/nestjs/shared/decorators/IsPublicDecorator';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -19,6 +20,7 @@ import { UnauthorizedError } from '../errors/UnauthorizedError';
 export class AuthController {
   constructor(private readonly signInUseCase: SignInUseCase) {}
 
+  @Public()
   @Post('login')
   @ApiOperation({
     summary: 'Create an access token',

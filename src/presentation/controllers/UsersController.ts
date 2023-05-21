@@ -18,6 +18,8 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiNoContentResponse,
+  ApiUnauthorizedResponse,
+  ApiSecurity,
 } from '@nestjs/swagger';
 import { UserUseCases } from '../../application/use-cases/UserUseCases';
 import { UserVM } from '../view-models/users/UserVM';
@@ -28,29 +30,35 @@ import { InternalServerError } from '../errors/InternalServerError';
 import { UniqueIdVM } from '../view-models/value-objects/UniqueIdVM';
 import { NotFoundError } from '../errors/NotFoundError';
 import { UpdateUserVM } from '../view-models/users/UpdateUserVM';
+import { Public } from '../../infrastructure/nestjs/shared/decorators/IsPublicDecorator';
+import { UnauthorizedError } from '../errors/UnauthorizedError';
 
 @ApiTags('Users')
 @Controller('users')
+@ApiUnauthorizedResponse({
+  description: 'Invalid token/credentials',
+  type: UnauthorizedError,
+})
+@ApiBadRequestResponse({
+  description: 'The request object doesn`t match the expected one',
+  type: BadRequestError,
+})
+@ApiUnprocessableEntityResponse({
+  description: 'Validation error while creating user',
+  type: UnprocessableEntityError,
+})
+@ApiInternalServerErrorResponse({
+  description: 'Internal Server Error',
+  type: InternalServerError,
+})
 export class UsersController {
   constructor(private readonly usersUseCases: UserUseCases) {}
-
+  @Public()
   @Post()
   @ApiOperation({
     summary: 'Create an user',
   })
   @ApiCreatedResponse({ type: UserVM })
-  @ApiBadRequestResponse({
-    description: 'The request object doesn`t match the expected one',
-    type: BadRequestError,
-  })
-  @ApiUnprocessableEntityResponse({
-    description: 'Validation error while creating user',
-    type: UnprocessableEntityError,
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal Server Error',
-    type: InternalServerError,
-  })
   async createUser(@Body() createUser: CreateUserVM): Promise<UserVM> {
     const newUser = await this.usersUseCases.create(
       CreateUserVM.fromViewModel(createUser),
@@ -60,25 +68,14 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ApiSecurity('bearer')
   @ApiOperation({
     summary: 'Find an user',
   })
   @ApiOkResponse({ type: UserVM })
-  @ApiBadRequestResponse({
-    description: 'The request object doesn`t match the expected one',
-    type: BadRequestError,
-  })
   @ApiNotFoundResponse({
     description: "The request object wasn't found",
     type: NotFoundError,
-  })
-  @ApiUnprocessableEntityResponse({
-    description: 'Validation error while creating user',
-    type: UnprocessableEntityError,
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal Server Error',
-    type: InternalServerError,
   })
   async findUser(@Param() uniqueId: UniqueIdVM): Promise<UserVM> {
     const user = await this.usersUseCases.findById(
@@ -89,26 +86,15 @@ export class UsersController {
   }
 
   @Put(':id')
+  @ApiSecurity('bearer')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Update an user',
   })
   @ApiNoContentResponse()
-  @ApiBadRequestResponse({
-    description: 'The request object doesn`t match the expected one',
-    type: BadRequestError,
-  })
   @ApiNotFoundResponse({
     description: "The request object wasn't found",
     type: NotFoundError,
-  })
-  @ApiUnprocessableEntityResponse({
-    description: 'Validation error while creating user',
-    type: UnprocessableEntityError,
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal Server Error',
-    type: InternalServerError,
   })
   async updateUser(
     @Param() uniqueId: UniqueIdVM,

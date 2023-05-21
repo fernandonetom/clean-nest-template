@@ -8,14 +8,14 @@ import { AuthModule } from './auth.module';
 
 @Module({
   imports: [
-    InfraModule,
-    AuthModule,
-    UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
       expandVariables: true,
       envFilePath: Environment.getEnvironmentPatch(),
     }),
+    InfraModule,
+    AuthModule,
+    UsersModule,
   ],
 })
 export class AppModule {}

@@ -13,8 +13,10 @@ export class Environment {
     }
   }
 
-  static jwt = {
-    secret: process.env.JWT_SECRET,
-    expiration: Number(process.env.JWT_EXPIRATION),
-  };
+  static getJwtConfig() {
+    return {
+      secret: process.env.JWT_SECRET,
+      expiration: Number(process.env.JWT_EXPIRATION),
+    };
+  }
 }

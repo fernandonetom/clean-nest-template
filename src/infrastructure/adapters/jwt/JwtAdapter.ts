@@ -6,7 +6,7 @@ import {
 import * as jwt from 'jsonwebtoken';
 import { Environment } from '../../environments';
 
-export class JwtAdapter implements ITokenAdapter {
+export class JwtAdapter extends ITokenAdapter {
   async sing(input: ITokenInput): Promise<ITokenOutput> {
     const now = new Date();
     const expiration = Environment.jwt.expiration;

@@ -9,7 +9,7 @@ export interface ITokenOutput {
   expiresAt: number;
 }
 
-export interface ITokenAdapter {
-  sing(input: ITokenInput): Promise<ITokenOutput>;
-  verify(token: string): Promise<ITokenInput>;
+export abstract class ITokenAdapter {
+  abstract sing(input: ITokenInput): Promise<ITokenOutput>;
+  abstract verify(token: string): Promise<ITokenInput>;
 }

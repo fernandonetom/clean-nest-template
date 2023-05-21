@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { UnauthorizedException } from '../../domain/@shared/exceptions/UnauthorizedException';
 import { ISignInInputDto, ISignInOutputDto } from '../dtos/SignInDto';
 import { IEncryptAdapter } from '../interfaces/adapters/IEncryptAdapter';
@@ -5,6 +6,7 @@ import { ITokenAdapter } from '../interfaces/adapters/ITokenAdapter';
 import { IUsersRepository } from '../interfaces/repositories/IUsersRepository';
 import { ISignInUseCase } from '../interfaces/use-cases/ISignInUseCase';
 
+@Injectable()
 export class SignInUseCase implements ISignInUseCase {
   constructor(
     private readonly usersRepository: IUsersRepository,
